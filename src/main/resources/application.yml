@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: real-high
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+  thymeleaf:
+    check-template: true
+
+  devtools:
+    livereload:
+      enabled: true
+
+
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    pool-size: 2
+    password: ${JASYPT_KEY}
+
+gemini:
+  api:
+    key: ENC(YupuFzvBHJf+vAKxS9AbMSB8qUliGQwr5J8VrZGqZ0K1ArV6111VHQDJvqq2ZYHC)

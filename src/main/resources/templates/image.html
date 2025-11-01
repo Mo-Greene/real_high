@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: common_head}"></head>
+
+<body>
+<div class="w-[393px] min-h-screen bg-white mx-auto flex flex-col">
+    <header class="flex w-full h-14 px-3 justify-between items-center flex-shrink-0">
+        <a th:href="@{/main}" class="cursor-pointer w-12 h-12 flex justify-center items-center rounded-full">
+            <div class="w-12 h-12 bg-cover bg-center" th:style="'background-image: url(' + @{/image/button/back.svg} + ');'"></div>
+        </a>
+        <!-- SVG logo and other header elements -->
+    </header>
+
+    <main class="flex flex-col items-center justify-center flex-grow p-6">
+
+        <!-- Display Uploaded Image -->
+        <div th:if="${imageName}" class="w-full">
+            <div class="w-full aspect-square rounded-3xl bg-cover bg-center mb-4"
+                 th:style="'background-image: url(' + @{/uploads/{imageName}(imageName=${imageName})} + ');'">
+            </div>
+            <p class="text-lg font-semibold text-[#161819] text-center">이미지가 업로드되었습니다.</p>
+            <p class="text-center text-gray-500">이제 이 이미지로 다음 단계를 진행하세요.</p>
+        </div>
+
+        <!-- Display Upload Form -->
+        <div th:unless="${imageName}" class="w-full">
+            <form id="uploadForm" action="/image" method="post" enctype="multipart/form-data" class="w-full flex flex-col items-center">
+                <div id="imagePreview" class="w-full aspect-square rounded-3xl bg-gray-200 flex items-center justify-center mb-4 cursor-pointer">
+                    <p id="previewText" class="text-gray-500">클릭하여 이미지 업로드</p>
+                </div>
+                <input type="file" id="imageUploadInput" name="image" class="hidden" accept="image/*">
+                <button type="submit" id="uploadButton" class="w-full h-12 bg-[#161819] rounded-full text-white font-semibold hidden">
+                    업로드하기
+                </button>
+            </form>
+            <div th:if="${error}" class="mt-4 text-red-500 text-center">
+                <p th:text="${error}"></p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer th:if="${imageName}" class="px-12 py-5 flex-shrink-0">
+        <button id="nextStepButton" class="w-full h-12 flex justify-center items-center bg-[#161819] rounded-full text-white font-semibold">
+            다음 단계로
+        </button>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const imagePreview = document.getElementById('imagePreview');
+        const imageUploadInput = document.getElementById('imageUploadInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const previewText = document.getElementById('previewText');
+
+        if (imagePreview) {
+            imagePreview.addEventListener('click', () => {
+                imageUploadInput.click();
+            });
+        }
+
+        if (imageUploadInput) {
+            imageUploadInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imagePreview.style.backgroundImage = `url(${e.target.result})`;
+                        imagePreview.style.backgroundSize = 'cover';
+                        imagePreview.style.backgroundPosition = 'center';
+                        if(previewText) previewText.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                    uploadButton.classList.remove('hidden');
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

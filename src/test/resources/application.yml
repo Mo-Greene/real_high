@@ -1,0 +1,5 @@
+jasypt:
+  encryptor:
+    password: "test-password"
+    algorithm: PBEWithMD5AndDES
+    pool-size: 1
