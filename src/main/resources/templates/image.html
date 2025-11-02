@@ -10,7 +10,7 @@
     <a href="/main" class="ml-4 px-4 py-2 bg-red-600 text-white rounded">돌아가기</a>
 </div>
 
-<div th:if="${base64Image}" class="w-[393px] min-h-screen bg-[#17181A] mx-auto flex flex-col">
+<div id="mainContent" th:if="${base64Image}" class="w-[393px] min-h-screen bg-[#17181A] mx-auto flex flex-col">
 
     <header class="flex w-full h-14 px-3 justify-between items-center flex-shrink-0">
         <div class="cursor-pointer w-12 h-12 flex justify-center items-center rounded-full">
@@ -68,13 +68,56 @@
         </div>
     </main>
 
-    <footer class="px-12 py-5 flex-shrink-0">
-        <button id="actionButton" class="w-full h-12 flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 relative px-6 rounded-[99px] bg-[#17181a] border border-white/40 cursor-pointertransition duration-300 ease-in-out hover:-translate-y-1">
+    <footer id="footer-single-button" class="px-12 py-5 flex-shrink-0">
+        <button id="actionButton" class="w-full h-12 flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 relative px-6 rounded-[99px] bg-[#17181a] border border-white/40 cursor-pointer transition duration-300 ease-in-out hover:-translate-y-1">
             <p id="buttonText" class="flex-grow-0 flex-shrink-0 text-[15px] font-semibold text-center text-white">
                 가구 사진 불러오기
             </p>
         </button>
     </footer>
+
+    <footer id="footer-multi-button" class="hidden flex flex-col justify-center items-start w-[393px] gap-2 px-12 py-3">
+        <div id="downloadButton"
+             class="flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 h-12 relative px-6 rounded-[99px] bg-[#007bff] border border-white/40 cursor-pointer transition duration-300 ease-in-out hover:-translate-y-1">
+            <p class="flex-grow-0 flex-shrink-0 text-[15px] font-semibold text-center text-white">
+                이미지 다운로드
+            </p>
+        </div>
+        <div id="addFurnitureButton"
+             class="flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 h-12 relative px-6 rounded-[99px] bg-[#17181a] border border-white/40 cursor-pointer transition duration-300 ease-in-out hover:-translate-y-1">
+            <p class="flex-grow-0 flex-shrink-0 text-[15px] font-semibold text-center text-white">
+                가구 추가하기
+            </p>
+        </div>
+        <div id="resetButton"
+             class="flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 h-12 relative px-6 rounded-[99px] cursor-pointer transition duration-300 ease-in-out hover:-translate-y-1">
+            <p class="flex-grow-0 flex-shrink-0 text-[15px] font-semibold text-center text-white">
+                처음으로 돌아가기
+            </p>
+        </div>
+    </footer>
+</div>
+
+<div id="adLoadingPage" class="hidden">
+    <div class="w-[393px] min-h-screen overflow-hidden bg-white mx-auto flex flex-col justify-center items-center">
+        <div class="flex flex-col justify-start items-center w-[393px]">
+            <div class="flex flex-col justify-start items-center self-stretch flex-grow-0 flex-shrink-0 h-[250px] relative gap-6 py-[72px]">
+                <div class="flex justify-start items-center flex-grow-0 flex-shrink-0 relative gap-2">
+                    <lottie-player src="https://cdn.lottielab.com/l/AY9mNrHsrN6GLR.json"
+                                   background="transparent"
+                                   speed="1"
+                                   style="width: 48px; height: 48px;"
+                                   loop
+                                   autoplay
+                    ></lottie-player>
+                </div>
+                <p class="self-stretch flex-grow-0 flex-shrink-0 w-[393px] text-[15px] font-semibold text-center text-black/[0.48]">
+                    <span class="self-stretch flex-grow-0 flex-shrink-0 w-[393px] text-[15px] font-semibold text-center text-black/[0.48]">가구를 배치 중이에요</span><br />
+                    <span class="self-stretch flex-grow-0 flex-shrink-0 w-[393px] text-[15px] font-semibold text-center text-black/[0.48]">잠시만 기다려주세요</span>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
