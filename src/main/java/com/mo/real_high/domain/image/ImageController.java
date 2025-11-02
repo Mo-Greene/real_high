@@ -16,8 +16,15 @@ public class ImageController {
 
 	private final ImageService imageService;
 
+	/**
+	 * 이미지 파일 합성
+	 * @param model
+	 * @param baseImage
+	 * @param modifiedImage
+	 * @return
+	 */
 	@PostMapping(value = "/generate/{model}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<byte[]> generateCombinedImage(@PathVariable("model") AiKey model,
+	public ResponseEntity<byte[]> generateCombinedImage(@PathVariable("model") String model,
 	                                                    @RequestParam("baseImage") MultipartFile baseImage,
 	                                                    @RequestParam("modifiedImage") MultipartFile modifiedImage) {
 

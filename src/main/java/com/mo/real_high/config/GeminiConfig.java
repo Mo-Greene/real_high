@@ -12,9 +12,12 @@ public class GeminiConfig {
 	private String apiKey;
 
 	public static final String GEMINI_MODEL = "gemini-2.5-flash-image-preview";
-	public static final String GEMINI_PROMPT = "Create a realistic interior design photo. " +
-		"Take the furniture from the second image and place it in the room from the first image. " +
-		"Adjust the lighting, shadows, and perspective to make it look like a natural part of the room.";
+	public static final String GEMINI_PROMPT = "You will be given two images. " +
+		"The first image is the original, empty room (this is the base background). " +
+		"The second image is a composite showing a piece of furniture crudely placed in that room (this is the user's desired placement). " +
+		"Your task is to use these two images as context. " +
+		"Create a single, new, photorealistic image that shows the furniture from the second image realistically integrated into the room from the first image. " +
+		"Follow the placement and scale from the second image, but fix all lighting, shadows, and perspective to make it look completely natural.";
 
 	@Bean
 	public Client client() {

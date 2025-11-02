@@ -2,6 +2,7 @@ package com.mo.real_high;
 
 import com.mo.real_high.exception.MultipartFileEx;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.UUID;
 
 @Controller
@@ -38,35 +40,50 @@ public class PageController {
 		return "main";
 	}
 
+	/**
+	 * 이미지 페이지
+	 * @param model
+	 * @return
+	 */
 	@GetMapping("/image")
+	public String showImagePage(Model model) {
+		if (!model.containsAttribute("base64Image")) {
+			return "redirect:/main";
+		}
+		return "image";
+	}
+
+	/**
+	 * 이미지 파일 파싱
+	 * @param file
+	 * @param redirectAttributes
+	 * @return
+	 */
+	@PostMapping("/image")
 	public String uploadImage(@RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
+
 		if (file.isEmpty()) {
-			redirectAttributes.addFlashAttribute("error", "업로드할 파일을 선택해주세요.");
+			redirectAttributes.addFlashAttribute("message", "업로드할 파일을 선택해주세요.");
 			return "redirect:/image";
 		}
-		if (!file.getContentType().startsWith("image")) {
+
+		String mimeType = file.getContentType();
+		if (mimeType == null || !mimeType.startsWith("image")) {
 			redirectAttributes.addFlashAttribute("error", "이미지 파일만 업로드할 수 있습니다.");
 			return "redirect:/image";
 		}
 
 		try {
-			File uploadDir = new File(UPLOAD_DIR);
-			if (!uploadDir.exists()) {
-				uploadDir.mkdirs();
-			}
+			byte[] imageBytes = file.getBytes();
+			String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
-			String originalFilename = file.getOriginalFilename();
-			String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-			String storedFilename = UUID.randomUUID().toString() + extension;
+			redirectAttributes.addFlashAttribute("base64Image", base64Image);
+			redirectAttributes.addFlashAttribute("mimeType", mimeType);
 
-			Path path = Paths.get(UPLOAD_DIR + storedFilename);
-			Files.write(path, file.getBytes());
-
-			redirectAttributes.addFlashAttribute("imageName", storedFilename);
 			return "redirect:/image";
-
 		} catch (IOException e) {
-			redirectAttributes.addFlashAttribute("error", "파일 업로드에 실패했습니다.");
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", "파일 처리에 실패했습니다.");
 			return "redirect:/image";
 		}
 	}

@@ -20,8 +20,6 @@ public class GeminiService implements AiStrategy {
 
 	private final Client geminiClient;
 
-	
-
 	/**
 	 * 이미지 렌더링
 	 * @param baseImage

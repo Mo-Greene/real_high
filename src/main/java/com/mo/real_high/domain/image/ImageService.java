@@ -24,9 +24,11 @@ public class ImageService {
 	 * @param modifiedImage
 	 * @return
 	 */
-	public byte[] generateImage(AiKey model, MultipartFile baseImage, MultipartFile modifiedImage) {
+	public byte[] generateImage(String modelName, MultipartFile baseImage, MultipartFile modifiedImage) {
 
-		AiStrategy strategy = aiStrategies.get(model.getBeanName());
+		AiKey model = AiKey.fromValue(modelName);
+
+		AiStrategy strategy = aiStrategies.get(model.getValue());
 
 		return strategy.generateImage(baseImage, modifiedImage);
 	}

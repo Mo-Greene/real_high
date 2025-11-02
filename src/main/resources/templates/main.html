@@ -43,7 +43,9 @@
     </header>
 
     <main class="flex flex-col flex-grow">
-        <input type="file" id="roomFileInput" class="hidden" accept="image/*">
+        <form id="uploadForm" action="/image" method="post" enctype="multipart/form-data">
+            <input type="file" id="roomFileInput" name="image" class="hidden" accept="image/*">
+        </form>
         <input type="file" id="furnitureFileInput" class="hidden" accept="image/*">
         <div class="p-6">
             <div id="mainImage" class="w-full aspect-square bg-cover bg-center transition-opacity duration-500 ease-in-out rounded-3xl" th:style="'background-image: url(' + @{/image/image_1.png} + ');'"></div>
@@ -79,6 +81,6 @@
     </footer>
 </div>
 
-<div th:replace="~{fragments/footer :: common_footer}"></div>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

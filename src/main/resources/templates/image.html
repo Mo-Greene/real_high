@@ -4,81 +4,124 @@
 <head th:replace="~{fragments/header :: common_head}"></head>
 
 <body>
-<div class="w-[393px] min-h-screen bg-white mx-auto flex flex-col">
+
+<div th:if="${error}" class="w-full h-screen flex items-center justify-center bg-red-100 text-red-700 p-4">
+    <p>오류: <span th:text="${error}"></span></p>
+    <a href="/main" class="ml-4 px-4 py-2 bg-red-600 text-white rounded">돌아가기</a>
+</div>
+
+<div th:if="${base64Image}" class="w-[393px] min-h-screen bg-[#17181A] mx-auto flex flex-col">
+
     <header class="flex w-full h-14 px-3 justify-between items-center flex-shrink-0">
-        <a th:href="@{/main}" class="cursor-pointer w-12 h-12 flex justify-center items-center rounded-full">
-            <div class="w-12 h-12 bg-cover bg-center" th:style="'background-image: url(' + @{/image/button/back.svg} + ');'"></div>
-        </a>
-        <!-- SVG logo and other header elements -->
+        <div class="cursor-pointer w-12 h-12 flex justify-center items-center rounded-full">
+            <div class="w-12 h-12 bg-cover bg-center" th:style="'background-image: url(' + @{/image/button/back-image.svg} + ');'"></div>
+        </div>
+
+        <p class="flex-grow-0 flex-shrink-0 text-[13px] font-semibold text-center text-white">
+            방 사진 완료 !
+        </p>
+
+        <div class="flex justify-center items-center flex-grow-0 flex-shrink-0 w-12 h-12 relative rounded-[99px]">
+            <div class="flex-grow-0 flex-shrink-0 w-6 h-6 relative overflow-hidden"></div>
+        </div>
     </header>
 
-    <main class="flex flex-col items-center justify-center flex-grow p-6">
+    <main class="flex flex-col flex-grow relative justify-center">
 
-        <!-- Display Uploaded Image -->
-        <div th:if="${imageName}" class="w-full">
-            <div class="w-full aspect-square rounded-3xl bg-cover bg-center mb-4"
-                 th:style="'background-image: url(' + @{/uploads/{imageName}(imageName=${imageName})} + ');'">
+        <input type="hidden" id="baseImageData" th:value="'data:' + ${mimeType} + ';base64,' + ${base64Image}">
+        <input type="file" id="furnitureFileInput" class="hidden" accept="image/*">
+
+        <div id="imageContainer" class="w-full h-auto relative">
+
+            <img id="roomImage"
+                 class="w-full h-auto object-contain max-h-[662px] mx-auto"
+                 th:src="|data:${mimeType};base64,${base64Image}|" />
+
+            <div id="furnitureWrapper" class="resize-box absolute top-0 left-0 w-1/2 opacity-80 hidden flex"
+                 style="position: absolute; left: 0px; top: 0px;"
+            >
+                <img id="furniturePreview" class="w-full h-full object-contain cursor-move" src="" alt=""/>
+
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="resize-handle top-left">
+                    <path d="M25.5 1.5H1.5V25.5" stroke="white" stroke-width="3"></path>
+                </svg>
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="resize-handle top-right">
+                    <path d="M25.5 1.5H1.5V25.5" stroke="white" stroke-width="3"></path>
+                </svg>
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="resize-handle bottom-left">
+                    <path d="M25.5 1.5H1.5V25.5" stroke="white" stroke-width="3"></path>
+                </svg>
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="resize-handle bottom-right">
+                    <path d="M25.5 1.5H1.5V25.5" stroke="white" stroke-width="3"></path>
+                </svg>
             </div>
-            <p class="text-lg font-semibold text-[#161819] text-center">이미지가 업로드되었습니다.</p>
-            <p class="text-center text-gray-500">이제 이 이미지로 다음 단계를 진행하세요.</p>
         </div>
 
-        <!-- Display Upload Form -->
-        <div th:unless="${imageName}" class="w-full">
-            <form id="uploadForm" action="/image" method="post" enctype="multipart/form-data" class="w-full flex flex-col items-center">
-                <div id="imagePreview" class="w-full aspect-square rounded-3xl bg-gray-200 flex items-center justify-center mb-4 cursor-pointer">
-                    <p id="previewText" class="text-gray-500">클릭하여 이미지 업로드</p>
-                </div>
-                <input type="file" id="imageUploadInput" name="image" class="hidden" accept="image/*">
-                <button type="submit" id="uploadButton" class="w-full h-12 bg-[#161819] rounded-full text-white font-semibold hidden">
-                    업로드하기
-                </button>
-            </form>
-            <div th:if="${error}" class="mt-4 text-red-500 text-center">
-                <p th:text="${error}"></p>
-            </div>
+        <div id="loadingSpinner"
+             class="hidden absolute inset-0 bg-black/70 flex flex-col justify-center items-center z-50 rounded-3xl">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
+            <p class="text-white ml-4 mt-4">AI가 생성 중입니다...</p>
         </div>
-
     </main>
 
-    <footer th:if="${imageName}" class="px-12 py-5 flex-shrink-0">
-        <button id="nextStepButton" class="w-full h-12 flex justify-center items-center bg-[#161819] rounded-full text-white font-semibold">
-            다음 단계로
+    <footer class="px-12 py-5 flex-shrink-0">
+        <button id="actionButton" class="w-full h-12 flex justify-center items-center self-stretch flex-grow-0 flex-shrink-0 relative px-6 rounded-[99px] bg-[#17181a] border border-white/40 cursor-pointertransition duration-300 ease-in-out hover:-translate-y-1">
+            <p id="buttonText" class="flex-grow-0 flex-shrink-0 text-[15px] font-semibold text-center text-white">
+                가구 사진 불러오기
+            </p>
         </button>
     </footer>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const imagePreview = document.getElementById('imagePreview');
-        const imageUploadInput = document.getElementById('imageUploadInput');
-        const uploadButton = document.getElementById('uploadButton');
-        const previewText = document.getElementById('previewText');
+<style>
+    /* 리사이즈 박스 테두리 */
+    .resize-box {
+        box-sizing: border-box;
+        justify-content: center;
+        align-items: center;
+    }
+    .resize-box img {
+        display: block; /* 이미지 아래 여백 제거 */
+    }
 
-        if (imagePreview) {
-            imagePreview.addEventListener('click', () => {
-                imageUploadInput.click();
-            });
-        }
+    /* 리사이즈 핸들 스타일 (SVG) */
+    .resize-handle {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        z-index: 10;
+    }
 
-        if (imageUploadInput) {
-            imageUploadInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        imagePreview.style.backgroundImage = `url(${e.target.result})`;
-                        imagePreview.style.backgroundSize = 'cover';
-                        imagePreview.style.backgroundPosition = 'center';
-                        if(previewText) previewText.style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
-                    uploadButton.classList.remove('hidden');
-                }
-            });
-        }
-    });
-</script>
+    /* 각 핸들의 위치 및 회전 */
+    .resize-handle.top-left {
+        top: -3px;
+        left: -3px;
+        cursor: nwse-resize;
+    }
+    .resize-handle.top-right {
+        top: -3px;
+        right: -3px;
+        cursor: nesw-resize;
+        transform: rotate(90deg);
+    }
+    .resize-handle.bottom-left {
+        bottom: -3px;
+        left: -3px;
+        cursor: nesw-resize;
+        transform: rotate(-90deg);
+    }
+    .resize-handle.bottom-right {
+        bottom: -3px;
+        right: -3px;
+        cursor: nwse-resize;
+        transform: rotate(180deg);
+    }
+</style>
 
+<script th:src="@{/js/image.js}"></script>
 </body>
 </html>

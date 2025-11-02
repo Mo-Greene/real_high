@@ -25,14 +25,14 @@ class ImageServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		imageService = new ImageService(Map.of(AiKey.GEMINI.getBeanName(), geminiStrategy));
+		imageService = new ImageService(Map.of(AiKey.GEMINI.getValue(), geminiStrategy));
 	}
 
 	@Test
 	@DisplayName("GEMINI 모델 키로 요청 시, 결과반환")
 	void generateImage_WithGeminiKey_ShouldCallCorrectStrategy() {
 		//given
-		AiKey model = AiKey.GEMINI;
+		String model = "gemini";
 		MultipartFile baseImage = new MockMultipartFile("base.jpg", "base.jpg", "image/jpeg", "baseImage".getBytes());
 		MultipartFile modifiedImage = new MockMultipartFile("modified.png", "modified.png", "image/png", "modifiedImage".getBytes());
 
