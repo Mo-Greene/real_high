@@ -372,7 +372,7 @@ downloadButton.addEventListener('click', async () => {
         triggerDownload(blob, 'generated_image.png');
     } catch (err) {
         console.error('Error downloading image:', err);
-        alert('이미지 다운로드에 실패했습니다.');
+        alert('이미지 다운로드에 실패했습니다.')
     }
 });
 
@@ -382,6 +382,6 @@ addFurnitureButton.addEventListener('click', () => {
 });
 
 resetButton.addEventListener('click', () => {
-    // /main으로 페이지를 이동시킵니다.
-    window.location.href = '/main';
+    sessionStorage.setItem('isReturningUser', 'true');
+    window.location.href = '/';
 });
