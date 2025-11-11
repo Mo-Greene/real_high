@@ -9,8 +9,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,6 +37,9 @@ class ImageControllerTest {
 		MockMultipartFile baseImage = new MockMultipartFile("baseImage", "base.jpg", MediaType.IMAGE_JPEG_VALUE, "base".getBytes());
 		MockMultipartFile modifiedImage = new MockMultipartFile("modifiedImage", "modified.png", MediaType.IMAGE_PNG_VALUE, "modified".getBytes());
 
+		given(imageService.generateImage(eq(invalidModel), any(MultipartFile.class), any(MultipartFile.class)))
+			.willThrow(new IllegalArgumentException("Unknown value: " + invalidModel));
+
 		// when
 		ResultActions actions = mockMvc.perform(multipart("/generate/{model}", invalidModel)
 			.file(baseImage)
@@ -44,8 +51,6 @@ class ImageControllerTest {
 			.andDo(print())
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").exists())
-			.andExpect(jsonPath("$.message").value(
-				String.format("'%s' 필드에 잘못된 값 '%s'이(가) 입력되었습니다. 허용되는 값들 중 하나를 사용해주세요.", "model", invalidModel)
-			));
+			.andExpect(jsonPath("$.message").value("Unknown value: " + invalidModel));
 	}
 }

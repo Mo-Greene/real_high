@@ -19,7 +19,7 @@ public class ImageService {
 
 	/**
 	 * 이미지 렌더링
-	 * @param model
+	 * @param modelName
 	 * @param baseImage
 	 * @param modifiedImage
 	 * @return
