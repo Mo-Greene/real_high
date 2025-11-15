@@ -2,11 +2,16 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.bmuschko.docker-spring-boot-application' version '9.4.0'
 }
 
 group = 'com.mo'
 version = '0.0.1-SNAPSHOT'
 description = 'real_high'
+
+bootJar {
+    archiveFileName = "blue_bullet.jar"
+}
 
 java {
     toolchain {
@@ -52,4 +57,13 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+def imagePrefix = 'blue-bullet'
+
+docker {
+    springBootApplication {
+        baseImage = 'eclipse-temurin:17-jre'
+        images = ["${System.getenv('DOCKER_USERNAME')}/${System.getenv('IMAGE_TAG') ?: imagePrefix}"]
+    }
 }
