@@ -61,8 +61,8 @@ jobs:
           
           cd ${{ secrets.DEPLOY_PATH }} || exit 1 
           
-          docker compose pull
+          docker compose pull was1 was2
           
-          docker compose up -d --force-recreate
+          docker compose up -d --force-recreate was1 was2
           
           echo "Deployment finished. Check service status with 'docker compose ps'"
