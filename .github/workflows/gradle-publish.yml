@@ -56,6 +56,8 @@ jobs:
         # 원격 서버에서 실행할 스크립트
         script: |
           echo "Deployment started on remote server..."
+
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           
           cd ${{ secrets.DEPLOY_PATH }} || exit 1 
           
