@@ -5,13 +5,6 @@ spring:
   application:
     name: real-high
 
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
-  session:
-    store-type: none
-
   servlet:
     multipart:
       max-file-size: 10MB
