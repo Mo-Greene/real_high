@@ -43,16 +43,21 @@ public class GeminiService implements AiStrategy {
 		Content content = Content.fromParts(baseImagePart, modifiedImagePart, textPrompt);
 		List<Content> contents = List.of(content);
 
-		GenerateContentResponse response = geminiClient.models.generateContent(
-			GEMINI_MODEL,
-			contents,
-			null
-		);
+		GenerateContentConfig config = GenerateContentConfig.builder()
+				.responseModalities("IMAGE")
+				.build();
 
-		List<Candidate> responseContents = response.candidates().orElseThrow(() -> new GeminiResponseEx("No Candidate"));
-		Content responseContent = responseContents.get(0).content().orElseThrow(() -> new GeminiResponseEx("No Contents"));
-		List<Part> parts = responseContent.parts().orElseThrow(() -> new GeminiResponseEx("No Parts"));
-		Blob blob = parts.get(0).inlineData().orElseThrow(() -> new GeminiResponseEx("No Blob"));
-		return blob.data().orElseThrow(() -> new GeminiResponseEx("No Data"));
+		GenerateContentResponse response = geminiClient.models.generateContent(
+				GEMINI_MODEL,
+				contents,
+				config);
+
+		for (Part part : response.parts()) {
+			if (part.inlineData().isPresent()) {
+				return part.inlineData().get().data().orElseThrow(() -> new GeminiResponseEx("No Data"));
+			}
+		}
+
+		throw new GeminiResponseEx("No Image Generated");
 	}
 }
