@@ -66,3 +66,27 @@ jobs:
           docker compose up -d --force-recreate was1 was2
           
           echo "Deployment finished. Check service status with 'docker compose ps'"
+
+    - name: Send Telegram Notification
+      uses: appleboy/telegram-action@master
+      if: success()
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          ✅ Deployment Successful!
+          Repository: ${{ github.repository }}
+          Workflow: ${{ github.workflow }}
+          Ref: ${{ github.ref }}
+
+    - name: Send Telegram Notification on Failure
+      uses: appleboy/telegram-action@master
+      if: failure()
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: |
+          ❌ Deployment Failed!
+          Repository: ${{ github.repository }}
+          Workflow: ${{ github.workflow }}
+          Ref: ${{ github.ref }}
