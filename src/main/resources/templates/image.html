@@ -10,7 +10,7 @@
     <a href="/main" class="ml-4 px-4 py-2 bg-red-600 text-white rounded">돌아가기</a>
 </div>
 
-<div id="mainContent" th:if="${base64Image}" class="w-[393px] min-h-screen bg-[#17181A] mx-auto flex flex-col">
+<div id="mainContent" class="w-[393px] min-h-screen bg-[#17181A] mx-auto flex flex-col">
 
     <header class="flex w-full h-14 px-3 justify-between items-center flex-shrink-0">
         <div onclick="history.back()" class="cursor-pointer w-12 h-12 flex justify-center items-center rounded-full">
@@ -28,14 +28,14 @@
 
     <main class="flex flex-col flex-grow relative justify-center">
 
-        <input type="hidden" id="baseImageData" th:value="'data:' + ${mimeType} + ';base64,' + ${base64Image}">
+
         <input type="file" id="furnitureFileInput" class="hidden" accept="image/*">
 
         <div id="imageContainer" class="w-full h-auto relative">
 
             <img id="roomImage"
                  class="w-full h-auto object-contain max-h-[662px] mx-auto"
-                 th:src="|data:${mimeType};base64,${base64Image}|" />
+                 th:src="@{/image/content}" />
 
             <div id="furnitureWrapper" class="resize-box absolute top-0 left-0 w-1/2 opacity-80 hidden flex"
                  style="position: absolute; left: 0px; top: 0px;"

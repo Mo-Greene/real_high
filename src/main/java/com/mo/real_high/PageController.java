@@ -1,7 +1,6 @@
 package com.mo.real_high;
 
 import java.io.IOException;
-import java.util.Base64;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 
 @Controller
 public class PageController {
@@ -38,11 +40,25 @@ public class PageController {
 	 * @return
 	 */
 	@GetMapping("/image")
-	public String showImagePage(Model model) {
-		if (!model.containsAttribute("base64Image")) {
+	public String showImagePage(HttpSession session, Model model) {
+		if (session.getAttribute("uploadedImage") == null) {
 			return "redirect:/main";
 		}
 		return "image";
+	}
+
+	@GetMapping("/image/content")
+	public ResponseEntity<byte[]> serveImage(HttpSession session) {
+		byte[] imageBytes = (byte[]) session.getAttribute("uploadedImage");
+		String mimeType = (String) session.getAttribute("uploadedImageContentType");
+
+		if (imageBytes == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(mimeType))
+				.body(imageBytes);
 	}
 
 	/**
@@ -52,7 +68,8 @@ public class PageController {
 	 * @return
 	 */
 	@PostMapping("/image")
-	public String uploadImage(@RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
+	public String uploadImage(@RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes,
+			HttpSession session) {
 
 		if (file.isEmpty()) {
 			redirectAttributes.addFlashAttribute("message", "업로드할 파일을 선택해주세요.");
@@ -66,11 +83,8 @@ public class PageController {
 		}
 
 		try {
-			byte[] imageBytes = file.getBytes();
-			String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-
-			redirectAttributes.addFlashAttribute("base64Image", base64Image);
-			redirectAttributes.addFlashAttribute("mimeType", mimeType);
+			session.setAttribute("uploadedImage", file.getBytes());
+			session.setAttribute("uploadedImageContentType", mimeType);
 
 			return "redirect:/image";
 		} catch (IOException e) {
