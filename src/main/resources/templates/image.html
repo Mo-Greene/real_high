@@ -4,6 +4,7 @@
 <head th:replace="~{fragments/header :: common_head}"></head>
 
 <body>
+<th:block th:replace="~{fragments/header :: gtm_noscript}"></th:block>
 
 <div th:if="${error}" class="w-full h-screen flex items-center justify-center bg-red-100 text-red-700 p-4">
     <p>오류: <span th:text="${error}"></span></p>
